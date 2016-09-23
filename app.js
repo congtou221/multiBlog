@@ -17,6 +17,20 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+app.use(session({
+  secret: settings.cookieSecret,
+  key: settings.db,
+  cookie: {maxAge: 1000 * 60 * 60 * 24 * 30},
+  store: new MongoStore({
+    db: settings.db,
+    host: settings.host,
+    port: settings.port
+  }),
+  resave: true,
+  saveUninitialized: true
+}));
+
 app.use(flash());
 
 // uncomment after placing your favicon in /public
@@ -61,15 +75,6 @@ app.use(function(err, req, res, next) {
   });
 });
 
-app.use(session({
-  secrect: settings.cookieSecret,
-  key: settings.db,
-  cookie: {maxAge: 1000 * 60 * 60 * 24 * 30},
-  store: new MongoStore({
-    db: settings.db,
-    host: settings.host,
-    port: settings.port
-  })
-}));
+
 
 module.exports = app;
